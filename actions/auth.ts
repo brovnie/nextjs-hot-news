@@ -1,9 +1,9 @@
 'use server';
-import { redirect } from 'next/navigation';
 import { auth as auth_firebase } from '../firebase/config';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  signOut,
 } from 'firebase/auth';
 
 export async function signup(prevState, formData: FormData) {
@@ -12,6 +12,7 @@ export async function signup(prevState, formData: FormData) {
   const errors = {};
   if ((email && !email.includes('@')) || (password && password.length < 8)) {
     return {
+      status: 400,
       error: {
         message: 'Invalid data',
       },
@@ -19,9 +20,10 @@ export async function signup(prevState, formData: FormData) {
   }
 
   if (email && password) {
-    console.warn('test');
     createUserWithEmailAndPassword(auth_firebase, email, password);
-    redirect('/');
+    return {
+      status: 200,
+    };
   }
 }
 
@@ -49,6 +51,7 @@ export async function login(prevState, formData: FormData) {
       case 'auth/invalid-credential':
         console.warn('Invalid credentials');
         return {
+          status: 400,
           error: {
             message: 'You have entered an invalid username or password',
           },
@@ -56,21 +59,40 @@ export async function login(prevState, formData: FormData) {
       case 'auth/too-many-requests':
         console.warn('Invalid credentials');
         return {
+          status: 400,
           error: {
             message:
               'Access to this account has been temporarily disabled due to many failed login attempts. Try again later or reset your password.',
           },
         };
       default:
-        console.warn(err.code);
         return {
+          status: 400,
           error: {
             message: 'An unexpected error has occurred. Please try again.',
           },
         };
     }
   }
-  redirect('/');
+  return {
+    status: 200,
+  };
+}
+
+export async function logout() {
+  try {
+    await signOut(auth_firebase);
+    return {
+      status: 200,
+    };
+  } catch (err) {
+    return {
+      status: 400,
+      error: {
+        message: 'An unexpected error has occurred. Please try again.',
+      },
+    };
+  }
 }
 
 export async function auth(mode: string, prevState, formData: FormData) {

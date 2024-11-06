@@ -1,13 +1,24 @@
 'use client';
 import { auth } from '@/actions/auth';
+import { useAuth } from '@/context/auth';
 import Link from 'next/link';
-import { useActionState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useActionState, useEffect } from 'react';
 
 const Form = (props: { mode: string }) => {
+  const { login } = useAuth();
+  const router = useRouter();
   const [state, action, isPending] = useActionState(
     auth.bind(null, props.mode),
     null
   );
+  useEffect(() => {
+    if (state?.status === 200) {
+      login();
+      router.push('/');
+    }
+  }, [state]);
+
   return (
     <form action={action}>
       {state?.error && (
