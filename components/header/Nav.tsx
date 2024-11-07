@@ -6,7 +6,7 @@ const Nav = () => {
     <nav>
       <ul className="flex gap-2">
         <li>
-          <NavLink href="/news" title="Latest news" />
+          <NavLink href="/" title="Latest news" />
         </li>
         <NavUser />
       </ul>

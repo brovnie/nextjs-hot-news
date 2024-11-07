@@ -1,3 +1,8 @@
+import NewsForm from '../components/form/NewsForm';
 export default function Home() {
-  return <div>Hot news test</div>;
+  return (
+    <div>
+      <NewsForm />
+    </div>
+  );
 }
