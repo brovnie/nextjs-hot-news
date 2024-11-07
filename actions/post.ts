@@ -1,7 +1,8 @@
 'use server';
 
 import { db } from '@/firebase/config';
-import { addDoc, collection } from 'firebase/firestore';
+import { addDoc, collection, query, Timestamp } from 'firebase/firestore';
+import { getPossibleInstrumentationHookFilenames } from 'next/dist/build/utils';
 
 export async function savePost(prevData, formData: FormData) {
   const news = formData.get('news')?.toString();
@@ -15,10 +16,10 @@ export async function savePost(prevData, formData: FormData) {
   }
 
   try {
-    console.log('try');
     await addDoc(collection(db, 'posts'), {
       userId: 1,
       news,
+      created_at: Timestamp.now(),
     });
   } catch (error) {
     return {
@@ -28,4 +29,11 @@ export async function savePost(prevData, formData: FormData) {
       },
     };
   }
+}
+
+export async function getPosts() {
+  return new Promise((resolve, reject) => {
+    let collectionRef = collection(db, 'posts');
+    let orderedQuery = query(collectionRef, orderBy('created_at'));
+  });
 }
