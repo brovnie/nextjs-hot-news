@@ -1,7 +1,7 @@
 'use client';
 import { savePost } from '@/actions/post';
 import { useAuth } from '@/context/auth';
-import React, { useActionState } from 'react';
+import { useActionState } from 'react';
 
 const NewsForm = () => {
   const { isAuthenticated } = useAuth();
